@@ -1,89 +1,170 @@
-import React from 'react';
-import Layout from '../components/Layout';
-import { Award, Info } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion'
+import { Info, Search, UserPlus } from 'lucide-react'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
-interface LeaderboardEntryProps {
-  rank: number;
-  username: string;
-  points: number;
-  country: string;
+import { Avatar } from "../components/ui/avatar"
+import { Button } from "../components/ui/button"
+import { Input } from "../components/ui/input"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs"
+
+interface User {
+  id: number
+  rank: number
+  username: string
+  title: string
+  tier: 'gold' | 'silver' | 'bronze'
+  firstPlaceTests: number
+  points: number
+  avatar: string
 }
 
-const LeaderboardEntry: React.FC<LeaderboardEntryProps> = ({ rank, username, points, country }) => (
-  <div className="flex items-center justify-between bg-secondary text-secondary-foreground p-4 rounded-md mb-2">
-    <div className="flex items-center">
-      <span className="font-bold text-lg mr-4">{rank}</span>
-      <span>{username}</span>
-    </div>
-    <div className="flex items-center">
-      <span className="mr-4">{points} points</span>
-      <img src={`https://flagcdn.com/24x18/${country.toLowerCase()}.png`} alt={`${country} flag`} className="w-6 h-4" />
-    </div>
-  </div>
-);
+const generateUsers = (prefix: string): User[] => 
+  Array.from({ length: 30 }, (_, i) => ({
+    id: i + 1,
+    rank: i + 1,
+    username: `${prefix}User${i + 1}`,
+    title: ['Avid Reader', 'Bookaholic', 'Prolific Reader'][i % 3],
+    tier: ['gold', 'silver', 'bronze'][i % 3] as 'gold' | 'silver' | 'bronze',
+    firstPlaceTests: 30 - i,
+    points: 5000 - i * 100,
+    avatar: `/placeholder.svg?height=40&width=40`
+  }))
 
-const LeaderboardPage: React.FC = () => {
-  const leaderboardData = [
-    { rank: 1, username: "bookworm123", points: 5000, country: "us" },
-    { rank: 2, username: "readingenthusiast", points: 4800, country: "gb" },
-    { rank: 3, username: "literaturelover", points: 4600, country: "ca" },
-    { rank: 4, username: "pageturner", points: 4400, country: "au" },
-    { rank: 5, username: "booknerd", points: 4200, country: "de" },
-  ];
+const internationalUsers = generateUsers('Global')
+const localUsers = generateUsers('Local')
+const friendUsers = generateUsers('Friend')
+
+// const tiers: Record<string, string> = {
+  // gold: '🏆',
+  // silver: '🥈',
+  // bronze: '🥉',
+// }
+
+export default function LeaderboardPage() {
+  const [searchTerm, setSearchTerm] = useState('')
+  const [activeTab, setActiveTab] = useState('international')
+  const navigate = useNavigate()
+
+  const getFilteredUsers = () => {
+    let users: User[]
+    switch (activeTab) {
+      case 'local':
+        users = localUsers
+        break
+      case 'friends':
+        users = friendUsers
+        break
+      default:
+        users = internationalUsers
+    }
+    return users.filter(user =>
+      user.username.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  }
+
+  const handleInfoClick = () => {
+    navigate('/leaderboard-info')
+  }
+
+  const handleAddFriend = (username: string) => {
+    toast.success(`Friend request sent to ${username}`, {
+      position: "bottom-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    })
+  }
+
+  const handleUserClick = (userId: number) => {
+    navigate(`/profile/${userId}`)
+  }
+
+  const filteredUsers = getFilteredUsers()
 
   return (
-    <Layout>
-      <h1 className="text-3xl font-bold mb-8">Leaderboard</h1>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="md:col-span-2">
-          {leaderboardData.map((entry) => (
-            <LeaderboardEntry key={entry.rank} {...entry} />
-          ))}
-        </div>
-        <div>
-          <div className="bg-secondary text-secondary-foreground p-6 rounded-lg shadow-md mb-6">
-            <h2 className="text-2xl font-semibold mb-4 flex items-center">
-              <Info size={24} className="mr-2" />
-              Ranking System
-            </h2>
-            <p className="mb-4">
-              Our ranking system is based on the points you earn through various activities on the platform. Here's how you can climb the ranks:
-            </p>
-            <ul className="list-disc list-inside space-y-2">
-              <li>Reading books: 10 points per page</li>
-              <li>Completing quizzes: 50-100 points based on score</li>
-              <li>Writing reviews: 200 points</li>
-              <li>Maintaining reading streaks: 50 points per day</li>
-            </ul>
+    <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16 py-4 sm:py-6 md:py-8">
+      <header className="flex flex-col items-center mb-6 sm:mb-8">
+        <div className="flex items-center space-x-2 sm:space-x-4 w-full max-w-md mb-4">
+          <div className="relative flex-grow">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 sm:h-5 sm:w-5" />
+            <Input
+              type="text"
+              placeholder="Search users..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-9 sm:pl-10 pr-4 py-1 sm:py-2 w-full text-sm sm:text-base"
+            />
           </div>
-          <div className="bg-secondary text-secondary-foreground p-6 rounded-lg shadow-md">
-            <h2 className="text-2xl font-semibold mb-4 flex items-center">
-              <Award size={24} className="mr-2" />
-              Rewards
-            </h2>
-            <ul className="space-y-4">
-              <li>
-                <h3 className="font-semibold">Bronze Tier (0-1000 points)</h3>
-                <p>Access to basic features</p>
-              </li>
-              <li>
-                <h3 className="font-semibold">Silver Tier (1001-5000 points)</h3>
-                <p>Unlock AI book summaries</p>
-              </li>
-              <li>
-                <h3 className="font-semibold">Gold Tier (5001-10000 points)</h3>
-                <p>Unlock chat bot and personalized recommendations</p>
-              </li>
-              <li>
-                <h3 className="font-semibold">Platinum Tier (10001+ points)</h3>
-                <p>Unlock all premium features and early access to new releases</p>
-              </li>
-            </ul>
-          </div>
+          <Button variant="ghost" size="icon" onClick={handleInfoClick} className="flex-shrink-0">
+            <Info className="h-4 w-4 sm:h-5 sm:w-5" />
+          </Button>
         </div>
-      </div>
-    </Layout>
-  );
-};
+      </header>
 
-export default LeaderboardPage;
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full sm:w-3/4 md:w-1/2 grid-cols-3 mb-6 sm:mb-8 mx-auto">
+          <TabsTrigger value="international" className="text-xs sm:text-sm">International</TabsTrigger>
+          <TabsTrigger value="local" className="text-xs sm:text-sm">Local</TabsTrigger>
+          <TabsTrigger value="friends" className="text-xs sm:text-sm">Friends</TabsTrigger>
+        </TabsList>
+
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <TabsContent value={activeTab}>
+              <div className="flex flex-col gap-2 mt-4 sm:mt-6">
+                {filteredUsers.map((user, index) => (
+                  <motion.div
+                    key={user.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: (index + 3) * 0.1 }}
+                    className={`flex items-center justify-between p-2 sm:p-4 border-b last:border-b-0 cursor-pointer ${index < 3 ? 'parallelogram-border' : ''}`}
+                    onClick={() => handleUserClick(user.id)}
+                  >
+                    <div className="flex items-center space-x-2 sm:space-x-4">
+                      <div className="text-sm sm:text-lg font-semibold w-6 sm:w-8">{user.rank}</div>
+                      <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
+                        <img src={user.avatar} alt={user.username} />
+                        <span className="text-xs sm:text-sm">{user.username.slice(0, 2)}</span>
+                      </Avatar>
+                      <div>
+                        <h3 className="font-semibold text-sm sm:text-base">{user.username}</h3>
+                        <p className="text-xs sm:text-sm text-gray-500 hidden sm:block">{user.title}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2 sm:space-x-4">
+                      <div className="font-semibold text-sm sm:text-base">{user.points} pts</div>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleAddFriend(user.username)
+                        }}
+                        className="h-8 w-8 sm:h-10 sm:w-10"
+                      >
+                        <UserPlus className="h-4 w-4 sm:h-5 sm:w-5" />
+                      </Button>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </TabsContent>
+          </motion.div>
+        </AnimatePresence>
+      </Tabs>
+      <ToastContainer />
+    </div>
+  )
+}

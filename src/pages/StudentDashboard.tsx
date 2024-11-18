@@ -1,7 +1,7 @@
+import { Award, Book, TrendingUp, Trophy } from 'lucide-react';
 import React from 'react';
+import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import Layout from '../components/Layout';
-import { Book, TrendingUp, Trophy, Award } from 'lucide-react';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const StudentDashboard: React.FC = () => {
   const monthlyReadingData = [

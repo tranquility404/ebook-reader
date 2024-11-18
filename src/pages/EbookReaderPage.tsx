@@ -1,40 +1,41 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { ReactReader, ReactReaderStyle } from 'react-reader';
+import { ReactReader } from 'react-reader';
 import { useQuery } from 'react-query';
-import { Volume2, Type, Plus, Minus, Moon, Sun, Maximize, Minimize, Copy, FileText, HelpCircle, MessageCircle } from 'lucide-react';
+import { Volume2, Plus, Minus, Moon, Sun, Maximize, Minimize, Copy, FileText, HelpCircle, MessageCircle } from 'lucide-react';
+// @ts-ignore
 import mockBook from "../assets/mock.epub";
 import { AnimatePresence, motion } from 'framer-motion';
 import ProgressUI from '../components/BookProgress';
 
-const getReaderStyles = (isDarkMode: boolean): ReactReaderStyle => ({
-  container: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    overflow: 'hidden',
-    backgroundColor: isDarkMode ? '#1a202c' : '#ffffff',
-  },
-  readerArea: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: isDarkMode ? '#1a202c' : '#ffffff',
-    transition: 'background-color 0.3s',
-  },
-  titleArea: {
-    display: 'none',
-  },
-  previous: {
-    display: 'none',
-  },
-  next: {
-    display: 'none',
-  },
-});
+// const getReaderStyles = (isDarkMode: boolean) => ({
+  // container: {
+    // position: 'absolute',
+    // top: 0,
+    // left: 0,
+    // right: 0,
+    // bottom: 0,
+    // overflow: 'scroll',
+    // backgroundColor: isDarkMode ? '#1a202c' : '#ffffff',
+  // },
+  // readerArea: {
+    // position: 'absolute',
+    // top: 0,
+    // left: 0,
+    // right: 0,
+    // bottom: 0,
+    // backgroundColor: isDarkMode ? '#1a202c' : '#ffffff',
+    // transition: 'background-color 0.3s',
+  // },
+  // titleArea: {
+    // display: 'none',
+  // },
+  // prev: {
+    // display: 'none',
+  // },
+  // next: {
+    // display: 'none',
+  // }
+// });
 
 const EbookReader: React.FC = () => {
   const [location, setLocation] = useState<string | number>(0);
@@ -150,13 +151,6 @@ const EbookReader: React.FC = () => {
     setAIResponse(action === 'summarize' ? 'This is a summary of the selected text.' : 'This is an explanation of the selected text.');
   };
 
-  const calculateProgress = () => {
-    if (totalPages > 0) {
-      return (currentPage / totalPages) * 100;
-    }
-    return 0;
-  };
-
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading eBook</div>;
 
@@ -235,7 +229,7 @@ const EbookReader: React.FC = () => {
               });
             });
             rendition.on('relocated', (location: any) => {
-              const flatToc = flattenToc(tocRef.current);
+              // const flatToc = flattenToc(tocRef.current);
               // console.log("relocated", location);
               setCurrentPage(location.start.index);
             });
@@ -252,7 +246,14 @@ const EbookReader: React.FC = () => {
             }
             
           }}
-          styles={getReaderStyles(isDarkMode)}
+          // readerStyles={ ((prev: IReactReaderStyle) =>
+            
+          //   { return { ...prev
+          //     // container: {
+          //     //   background: "yellow"
+          //     // }
+          //   }})
+          // }
           epubOptions={{
             flow: 'paginated',
             manager: 'default'

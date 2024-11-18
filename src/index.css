@@ -33,3 +33,27 @@
 body {
   font-family: 'Inter', sans-serif;
 }
+
+.parallelogram-border {
+  position: relative;
+  border-radius: 8px;
+}
+
+.parallelogram-border::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 2px solid rgb(var(--primary));
+  border-radius: 8px;
+  transform: skew(-10deg);
+  z-index: -1;
+}
+
+@media (min-width: 640px) {
+  .parallelogram-border::before {
+    transform: skew(-20deg);
+  }
+}

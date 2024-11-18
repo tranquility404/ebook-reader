@@ -1,8 +1,8 @@
-import React from 'react';
 import { motion } from 'framer-motion';
+import { Book, BookOpen, HelpCircle, MessageCircle, Users } from 'lucide-react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { Book, MessageCircle, HelpCircle, BookOpen, Users } from 'lucide-react';
 
 interface FeatureCardProps {
   icon: React.ReactNode;

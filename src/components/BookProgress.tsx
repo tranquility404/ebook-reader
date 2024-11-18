@@ -1,5 +1,5 @@
-import React from 'react';
 import { Book } from 'lucide-react';
+import React from 'react';
 
 interface ProgressUIProps {
   currentPage: number;

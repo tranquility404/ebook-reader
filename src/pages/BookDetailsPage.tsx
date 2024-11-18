@@ -1,8 +1,7 @@
+import { BarChart, Book, MessageCircle, Tag, User } from 'lucide-react';
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { Book, User, Tag, BarChart, MessageCircle } from 'lucide-react';
-import { Link } from 'react-router-dom';
 
 const BookDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();

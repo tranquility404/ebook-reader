@@ -1,8 +1,7 @@
+import { Menu, Moon, Sun, User, X } from 'lucide-react';
 import React, { ReactNode, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from './ThemeProvider';
-import { Sun, Moon, User, Menu, X } from 'lucide-react';
-import ThemeTransition from './ThemeTransition';
 
 interface LayoutProps {
   children: ReactNode;
